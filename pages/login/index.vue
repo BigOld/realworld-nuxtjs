@@ -12,25 +12,25 @@
           </p>
 
           <ul class="error-messages">
-            <template
-              v-for="(messages, field) in errors"
-            >
-              <li
-                v-for="(message, index) in messages"
-                :key="index"
-              >{{ field }} {{ message }}</li>
+            <template v-for = "(messages, field) in errors">
+              <li v-for="(message, index) in messages" :key="index">
+                {{ field }} {{ message }}
+              </li>
             </template>
           </ul>
 
           <form @submit.prevent="onSubmit">
             <fieldset v-if="!isLogin" class="form-group">
-              <input v-model="user.username" class="form-control form-control-lg" type="text" placeholder="Your Name" required>
+              <input v-model="user.username" class="form-control form-control-lg" type="text" placeholder="Your Name"
+                required>
             </fieldset>
             <fieldset class="form-group">
-              <input v-model="user.email" class="form-control form-control-lg" type="email" placeholder="Email" required>
+              <input v-model="user.email" class="form-control form-control-lg" type="email" placeholder="Email"
+                required>
             </fieldset>
             <fieldset class="form-group">
-              <input v-model="user.password" class="form-control form-control-lg" type="password" placeholder="Password" required minlength="8">
+              <input v-model="user.password" class="form-control form-control-lg" type="password" placeholder="Password"
+                required minlength="8">
             </fieldset>
             <button class="btn btn-lg btn-primary pull-xs-right">
               {{ isLogin ? 'Sign in' : 'Sign up' }}
@@ -44,32 +44,49 @@
 </template>
 
 <script>
-// import { login, register } from '@/api/user'
+import { login, register } from '@/api/user'
 
 // 仅在客户端加载 js-cookie 包
-// const Cookie = process.client ? require('js-cookie') : undefined
+const Cookie = process.client ? require('js-cookie') : undefined
 
 export default {
-  // middleware: 'notAuthenticated',
+  middleware: 'notAuthenticated',
   name: 'LoginIndex',
   computed: {
     isLogin() {
       return this.$route.name === 'login'
     }
   },
-  data () {
-      return {
-        user: {
-          username: '',
-          email: 'lpzmail@163.com',
-          password: '12345678'
-        },
-        errors: {} // 错误信息
+  data() {
+    return {
+      user: {
+        username: '',
+        email: 'lpzmail@163.com',
+        password: '12345678'
+      },
+      errors: {} // 错误信息
+    }
+  },
+  methods: {
+    async onSubmit() {
+      try {
+          const { data } = this.isLogin
+          ? await login({ user: this.user })
+          : await register({ user: this.user })
+
+        // 保存用户登录状态
+        this.$store.commit('setUser', data.user)
+        // 防止刷新页面数据丢失，把数据持久化
+        Cookie.set('user', JSON.stringify(data.user))
+        // 跳转到首页
+        this.$router.push('/')
+      } catch (error) {
+        this.errors = error.response.data.errors
       }
-    },
+    }
+  },
 }
 </script>
 
 <style>
-
 </style>
