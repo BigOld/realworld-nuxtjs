@@ -105,5 +105,14 @@
     </div>
   </div>
 </template>
+<script>
 
+export default {
+  name: 'ArticleIndex',
+}
+
+</script>
+
+<style>
+</style>
 
