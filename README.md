@@ -37,6 +37,4 @@ pm2 start npm -- start
 ```
 * Github Action自动化部署
 
-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
-
 
