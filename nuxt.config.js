@@ -48,6 +48,11 @@ module.exports = {
             ])
         }
     },
+
+    server: {
+      host: '0.0.0.0',
+      post: 8081
+    },
     // 注册插件
     plugins: [
       '~/plugins/request.js',
